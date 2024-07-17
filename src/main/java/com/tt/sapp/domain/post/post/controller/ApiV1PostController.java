@@ -3,11 +3,9 @@ package com.tt.sapp.domain.post.post.controller;
 import com.tt.sapp.domain.post.post.dto.PostDto;
 import com.tt.sapp.domain.post.post.entity.Post;
 import com.tt.sapp.domain.post.post.service.PostService;
+import com.tt.sapp.global.rsData.RsData;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,5 +31,19 @@ public class ApiV1PostController {
                 .findById(id)
                 .map(PostDto::new)
                 .get();
+    }
+
+    public record PostWriteRequestBody(String title) {
+    }
+
+    @PostMapping("")
+    public RsData<PostDto> write(@RequestBody PostWriteRequestBody requestBody) {
+        return new RsData<>(
+                "200-1",
+                "성공",
+                new PostDto(
+                        postService.write(requestBody.title)
+                )
+        );
     }
 }
