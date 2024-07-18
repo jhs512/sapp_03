@@ -15,7 +15,7 @@ public class PostService {
     }};
 
     public List<Post> findAll() {
-        return posts;
+        return posts.reversed();
     }
 
     public Optional<Post> findById(long id) {
@@ -33,5 +33,15 @@ public class PostService {
         posts.add(post);
 
         return post;
+    }
+
+    public Post modify(Post post, String title) {
+        post.setTitle(title);
+
+        return post;
+    }
+
+    public void delete(Post post) {
+        posts.remove(post);
     }
 }

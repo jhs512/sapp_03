@@ -4,6 +4,7 @@ import com.tt.sapp.domain.post.post.dto.PostDto;
 import com.tt.sapp.domain.post.post.entity.Post;
 import com.tt.sapp.domain.post.post.service.PostService;
 import com.tt.sapp.global.rsData.RsData;
+import com.tt.sapp.standard.dto.Empty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,17 +34,41 @@ public class ApiV1PostController {
                 .get();
     }
 
+
     public record PostWriteRequestBody(String title) {
     }
 
     @PostMapping("")
     public RsData<PostDto> write(@RequestBody PostWriteRequestBody requestBody) {
-        return new RsData<>(
-                "200-1",
-                "성공",
-                new PostDto(
-                        postService.write(requestBody.title)
-                )
-        );
+        Post post = postService.write(requestBody.title);
+
+        return new RsData<>(new PostDto(post));
+    }
+
+
+    public record PostModifyRequestBody(String title) {
+    }
+
+    @PutMapping("/{id}")
+    public RsData<PostDto> modify(
+            @PathVariable long id,
+            @RequestBody PostModifyRequestBody requestBody
+    ) {
+        Post post = postService.findById(id).get();
+        postService.modify(post, requestBody.title);
+
+        return new RsData<>(new PostDto(post));
+    }
+
+
+    @DeleteMapping("/{id}")
+    public RsData<Empty> delete(
+            @PathVariable long id
+    ) {
+        Post post = postService.findById(id).get();
+
+        postService.delete(post);
+
+        return new RsData<>();
     }
 }

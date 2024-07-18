@@ -1,2 +1,6 @@
 server:
   port: 8015
+spring:
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
