@@ -1,47 +1,50 @@
 package com.tt.sapp.domain.post.post.service;
 
 import com.tt.sapp.domain.post.post.entity.Post;
+import com.tt.sapp.domain.post.post.repository.PostRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 @Service
+@RequiredArgsConstructor
 public class PostService {
-    private final List<Post> posts = new ArrayList<>() {{
-        add(Post.builder().id(1L).title("title1").build());
-        add(Post.builder().id(2L).title("title2").build());
-    }};
+    private final PostRepository postRepository;
 
     public List<Post> findAll() {
-        return posts.reversed();
+        return postRepository.findAll();
     }
 
     public Optional<Post> findById(long id) {
-        return posts.stream().filter(post -> post.getId().equals(id))
-                .findFirst();
-
+        return postRepository.findById(id);
     }
 
+    @Transactional
     public Post write(String title) {
         Post post = Post.builder()
-                .id(posts.size() + 1L)
                 .title(title)
                 .build();
 
-        posts.add(post);
-
-        return post;
+        return postRepository.save(post);
     }
 
+    @Transactional
     public Post modify(Post post, String title) {
         post.setTitle(title);
 
         return post;
     }
 
+    @Transactional
     public void delete(Post post) {
-        posts.remove(post);
+        postRepository.delete(post);
+    }
+
+    public List<Post> findAllByOrderByIdDesc() {
+        return postRepository.findAllByOrderByIdDesc();
     }
 }

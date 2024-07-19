@@ -6,6 +6,7 @@ import com.tt.sapp.domain.post.post.service.PostService;
 import com.tt.sapp.global.rsData.RsData;
 import com.tt.sapp.standard.dto.Empty;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,12 +14,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ApiV1PostController {
     private final PostService postService;
 
     @GetMapping("")
     public List<PostDto> getItems() {
-        List<Post> items = postService.findAll();
+        List<Post> items = postService.findAllByOrderByIdDesc();
 
         return items
                 .stream()
@@ -39,6 +41,7 @@ public class ApiV1PostController {
     }
 
     @PostMapping("")
+    @Transactional
     public RsData<PostDto> write(@RequestBody PostWriteRequestBody requestBody) {
         Post post = postService.write(requestBody.title);
 
@@ -50,6 +53,7 @@ public class ApiV1PostController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public RsData<PostDto> modify(
             @PathVariable long id,
             @RequestBody PostModifyRequestBody requestBody
@@ -62,6 +66,7 @@ public class ApiV1PostController {
 
 
     @DeleteMapping("/{id}")
+    @Transactional
     public RsData<Empty> delete(
             @PathVariable long id
     ) {
